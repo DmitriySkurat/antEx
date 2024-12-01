@@ -4,7 +4,7 @@ pipeline {
     environment {
         ANT_HOME = 'D:\\BSUIR\\РИС\\9lab\\apache-ant-1.10.15' // Укажите путь к Ant
         JAVA_HOME = 'C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.5.11-hotspot' // Укажите путь к JDK
-        PATH = "${env.ANT_HOME}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
+        PATH = "${ANT_HOME}\\bin;${JAVA_HOME}\\bin;${env.PATH}" // Windows использует ";" для разделения путей
     }
 
     stages {
@@ -18,7 +18,7 @@ pipeline {
         stage('Build') {
             steps {
                 // Сборка проекта через Ant
-                sh "${env.ANT_HOME}/bin/ant -f build.xml clean compile jar"
+                bat "\"${env.ANT_HOME}\\bin\\ant\" -f build.xml clean compile jar"
             }
         }
 
@@ -26,7 +26,7 @@ pipeline {
             steps {
                 // Запуск тестов (если есть тесты)
                 echo 'Running tests...'
-                // sh 'ant test' - закомментировано, если тесты отсутствуют
+                // bat 'ant test' - закомментировано, если тесты отсутствуют
             }
         }
 
@@ -34,7 +34,7 @@ pipeline {
             steps {
                 // Проверка, собран ли JAR
                 script {
-                    def jarExists = fileExists 'out/something.jar'
+                    def jarExists = fileExists('out/something.jar')
                     if (!jarExists) {
                         error("JAR file not found!")
                     }
