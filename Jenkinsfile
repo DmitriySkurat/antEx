@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Клонируем репозиторий
-                git url: 'https://github.com/DmitriySkurat/antEx.git', branch: 'main'
+                git url: 'https://github.com/DmitriySkurat/antEx.git', branch: 'master'
             }
         }
 
