@@ -4,7 +4,8 @@ pipeline {
     environment {
         ANT_HOME = 'D:\\BSUIR\\РИС\\9lab\\apache-ant-1.10.15' // Укажите путь к Ant
         JAVA_HOME = 'C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.5.11-hotspot' // Укажите путь к JDK
-        PATH = "${ANT_HOME}\\bin;${JAVA_HOME}\\bin;${env.PATH}" // Windows использует ";" для разделения путей
+        PATH = PATH = "D:\BSUIR\РИС\9lab\apache-ant-1.10.15\bin;C:\Program Files\Eclipse Adoptium\jdk-21.0.5.11-hotspot\bin;%PATH%"
+ // Windows использует ";" для разделения путей
     }
 
     stages {
