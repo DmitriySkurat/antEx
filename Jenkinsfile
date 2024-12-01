@@ -1,39 +1,40 @@
 pipeline {
-    agent any // Запускается на любом доступном агенте
+    agent any
 
     environment {
-        ANT_HOME = 'D:\\BSUIR\\РИС\\9lab\\apache-ant-1.10.15' // Укажите путь к Ant
-        JAVA_HOME = 'C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.5.11-hotspot' // Укажите путь к JDK
-        PATH = PATH = "D:\BSUIR\РИС\9lab\apache-ant-1.10.15\bin;C:\Program Files\Eclipse Adoptium\jdk-21.0.5.11-hotspot\bin;%PATH%"
- // Windows использует ";" для разделения путей
+        JAVA_HOME = 'C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.5.11-hotspot'
+        ANT_HOME = 'D:\\BSUIR\\РИС\\9lab\\apache-ant-1.10.15'
+        PATH = "${ANT_HOME}\\bin;${JAVA_HOME}\\bin;${env.PATH}"
+    }
+
+    tools {
+        ant 'Apache Ant 1.10.15' // Reference to a configured Ant tool
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Клонируем репозиторий
                 git url: 'https://github.com/DmitriySkurat/antEx.git', branch: 'master'
             }
         }
 
         stage('Build') {
             steps {
-                // Сборка проекта через Ant
-                bat "\"${env.ANT_HOME}\\bin\\ant\" -f build.xml clean compile jar"
+                script {
+                    echo "Using Ant from: ${env.ANT_HOME}"
+                    bat "ant -f build.xml clean compile jar"
+                }
             }
         }
 
         stage('Test') {
             steps {
-                // Запуск тестов (если есть тесты)
                 echo 'Running tests...'
-                // bat 'ant test' - закомментировано, если тесты отсутствуют
             }
         }
 
         stage('Package') {
             steps {
-                // Проверка, собран ли JAR
                 script {
                     def jarExists = fileExists('out/something.jar')
                     if (!jarExists) {
@@ -47,7 +48,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "Deploy stage (optional)..."
-                // Добавьте шаги для деплоя, если нужно
             }
         }
     }
