@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Название проекта и дефолтный этап -->
+<project name="something" default="compile">
+    <!-- Место, где лежит главный класс. Класс, с которого будет производиться выполнение кода -->
+    <property name="main-class" value="org.lab.Main"/>
+
+    <!-- Каталог конечной сборки -->
+    <property name="dir.build" value="out"/>
+
+    <!-- Каталог, где искать скомпилированные .class файлы -->
+    <property name="dir.classes" value="${dir.build}/classes"/>
+
+    <!-- Каталог, где лежит исходный код -->
+    <property name="dir.src.java" value="src/java"/>
+
+    <!-- Каталог, где хранятся библиотеки -->
+    <property name="dir.lib" value="lib"/>
+
+    <!-- Каталог, где будет храниться .jar файл -->
+    <property name="file.jar" value="${dir.build}/${ant.project.name}.jar"/>
+
+    <!-- Путь, где располагаются либы -->
+    <path id="classpath">
+        <fileset dir="${dir.lib}" includes="**/*.jar"/>
+    </path>
+
+    <!-- Этап ЖЦ. Очистка каталога конечной сборки путём удаления -->
+    <target name="clean">
+        <delete dir="${dir.build}"/>
+    </target>
+
+    <!-- Этап ЖЦ. Создание каталогов для конечной сборки и хранения файлов классов -->
+    <target name="mkdirs">
+        <mkdir dir="${dir.build}"/>
+        <mkdir dir="${dir.classes}"/>
+    </target>
+
+    <!-- Этап ЖЦ. Компиляция -->
+    <target name="compile" depends="clean, mkdirs">
+        <javac srcdir="${dir.src.java}" destdir="${dir.classes}" includeantruntime="false" classpathref="classpath">
+            <!-- Для библиотек с аннотациями -->
+            <compilerarg value="-processorpath"/>
+            <!-- Особенность ломбока -->
+            <compilerarg value="${dir.lib}/lombok/lombok.jar"/>
+        </javac>
+    </target>
+
+    <!-- Этап ЖЦ. Создание jar-файла на основе файлов расширения .class -->
+    <target name="jar" depends="compile">
+        <jar destfile="${file.jar}"
+             basedir="${dir.classes}"
+             compress="false"
+             index="true">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- Этап ЖЦ. Запуск программы -->
+    <target name="run" depends="jar">
+        <java fork="true" classname="${main-class}">
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${file.jar}"/>
+            </classpath>
+        </java>
+    </target>
+</project>
